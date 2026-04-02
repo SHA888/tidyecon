@@ -9,6 +9,7 @@ Table style follows common journal/policy paper conventions:
   - Stat rows in 9pt
   - No vertical borders (academic convention)
 """
+
 from __future__ import annotations
 
 import io
@@ -21,6 +22,7 @@ try:
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
     from docx.shared import Pt, RGBColor
+
     _DOCX_AVAILABLE = True
 except ImportError:
     _DOCX_AVAILABLE = False
@@ -29,8 +31,7 @@ except ImportError:
 def render_docx(table: SummaryTable) -> bytes:
     if not _DOCX_AVAILABLE:
         raise ImportError(
-            "python-docx is required for Word output.\n"
-            "Install with: pip install python-docx"
+            "python-docx is required for Word output.\n" "Install with: pip install python-docx"
         )
     doc = Document()
 
@@ -47,7 +48,7 @@ def render_docx(table: SummaryTable) -> bytes:
 
     # ── Table ─────────────────────────────────────────────────────────────
     n_data_cols = len(table.col_labels)
-    total_cols  = n_data_cols + 1   # label + data
+    total_cols = n_data_cols + 1  # label + data
 
     t = doc.add_table(rows=0, cols=total_cols)
     t.style = "Table Grid"
@@ -117,8 +118,9 @@ def render_docx(table: SummaryTable) -> bytes:
 
 # ── Border helpers ────────────────────────────────────────────────────────────
 
+
 def _clear_table_borders(table) -> None:
-    tbl  = table._tbl
+    tbl = table._tbl
     tblPr = tbl.find(qn("w:tblPr"))
     if tblPr is None:
         tblPr = OxmlElement("w:tblPr")
@@ -140,9 +142,9 @@ def _set_bottom_border(row, thick: bool = False) -> None:
 
 
 def _set_row_border(row, position: str, thick: bool) -> None:
-    sz = "12" if thick else "6"   # half-points: 12 = 1.5pt, 6 = 0.75pt
+    sz = "12" if thick else "6"  # half-points: 12 = 1.5pt, 6 = 0.75pt
     for cell in row.cells:
-        tc   = cell._tc
+        tc = cell._tc
         tcPr = tc.get_or_add_tcPr()
         tcBorders = tcPr.find(qn("w:tcBorders"))
         if tcBorders is None:
@@ -155,8 +157,8 @@ def _set_row_border(row, position: str, thick: bool) -> None:
         tcBorders.append(border)
 
 
-def _set_font(cell, size: "Pt", color: "RGBColor") -> None:
+def _set_font(cell, size: Pt, color: RGBColor) -> None:
     for para in cell.paragraphs:
         for run in para.runs:
-            run.font.size  = size
+            run.font.size = size
             run.font.color.rgb = color

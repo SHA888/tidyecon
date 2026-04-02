@@ -8,23 +8,21 @@ Requires: uv add "tidyecon[pyfixest]"
 Run with:
     uv run python examples/02_pyfixest.py
 """
+
 try:
     import pyfixest as pf
-except ImportError:
-    raise SystemExit(
-        "pyfixest not installed. Run: uv add 'tidyecon[pyfixest]'"
-    )
+except ImportError as err:
+    raise SystemExit("pyfixest not installed. Run: uv add 'tidyecon[pyfixest]'") from err
 
-import pandas as pd
 import tidyecon as te
 
 # pyfixest ships a built-in dataset
 data = pf.get_data()
 
 # OLS with two-way FE and CRV1 clustered SEs
-fit_fe   = pf.feols("Y ~ X1 | f1 + f2",  data=data, vcov="CRV1")
-fit_iv   = pf.feols("Y ~ 1 | f1 | X1 ~ Z1", data=data)
-fit_pois = pf.fepois("Y ~ X1 | f1",       data=data)
+fit_fe = pf.feols("Y ~ X1 | f1 + f2", data=data, vcov="CRV1")
+fit_iv = pf.feols("Y ~ 1 | f1 | X1 ~ Z1", data=data)
+fit_pois = pf.fepois("Y ~ X1 | f1", data=data)
 
 # All three go through the same interface
 print("=== tidy (FE OLS) ===")

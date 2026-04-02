@@ -4,10 +4,10 @@ tests/test_adapters.py
 Tests that tidy() and glance() return correctly shaped, correctly
 typed DataFrames for each supported backend.
 """
+
 import numpy as np
 import pandas as pd
 import pytest
-import statsmodels.api as sm
 
 import tidyecon as te
 from tidyecon._protocol import GLANCE_COLS, TIDY_COLS
@@ -16,6 +16,7 @@ from tidyecon._protocol import GLANCE_COLS, TIDY_COLS
 
 
 # ── tidy() schema tests ───────────────────────────────────────────────────────
+
 
 class TestTidySchema:
     def test_columns_present(self, ols_fit):
@@ -57,6 +58,7 @@ class TestTidySchema:
 
 # ── tidy() numerical accuracy against R ──────────────────────────────────────
 
+
 class TestTidyNumerical:
     """Values from R: broom::tidy(lm(mpg ~ hp + wt, data=mtcars))"""
 
@@ -93,6 +95,7 @@ class TestTidyNumerical:
 
 # ── glance() tests ────────────────────────────────────────────────────────────
 
+
 class TestGlance:
     def test_columns_present(self, ols_fit):
         df = te.glance(ols_fit)
@@ -116,6 +119,7 @@ class TestGlance:
 
 
 # ── Unsupported model raises cleanly ─────────────────────────────────────────
+
 
 def test_unknown_model_raises():
     with pytest.raises(TypeError, match="no tidy\\(\\) adapter"):

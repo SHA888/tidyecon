@@ -3,8 +3,6 @@ tests/test_summary.py
 =====================
 Tests for modelsummary() — structure, content, and all three renderers.
 """
-import pytest
-import statsmodels.api as sm
 
 import tidyecon as te
 
@@ -12,6 +10,7 @@ import tidyecon as te
 
 
 # ── HTML output ───────────────────────────────────────────────────────────────
+
 
 class TestHTMLOutput:
     def test_returns_string(self, models):
@@ -79,6 +78,7 @@ class TestHTMLOutput:
 
 # ── LaTeX output ──────────────────────────────────────────────────────────────
 
+
 class TestLaTeXOutput:
     def test_returns_string(self, models):
         out = te.modelsummary(models, output="latex")
@@ -103,6 +103,7 @@ class TestLaTeXOutput:
 
 # ── Word / docx output ────────────────────────────────────────────────────────
 
+
 class TestDocxOutput:
     def test_returns_bytes(self, models):
         out = te.modelsummary(models, output="docx")
@@ -122,6 +123,7 @@ class TestDocxOutput:
 
 
 # ── File output ───────────────────────────────────────────────────────────────
+
 
 class TestFileOutput:
     def test_html_to_file(self, models, tmp_path):

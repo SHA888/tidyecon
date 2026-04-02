@@ -9,13 +9,12 @@ Requires in the document preamble:
 
 Output is a floating `table` environment with a `tabular` inside.
 """
+
 from __future__ import annotations
 
 from .._protocol import SummaryTable
 
-_PREAMBLE_NOTE = (
-    "% Requires \\usepackage{booktabs} in preamble\n"
-)
+_PREAMBLE_NOTE = "% Requires \\usepackage{booktabs} in preamble\n"
 
 
 def render_latex(table: SummaryTable) -> str:
@@ -78,17 +77,17 @@ def _tex(s: str) -> str:
     if not s:
         return s
     replacements = {
-        "&":  "\\&",
-        "%":  "\\%",
-        "$":  "\\$",
-        "#":  "\\#",
-        "_":  "\\_",
-        "{":  "\\{",
-        "}":  "\\}",
-        "~":  "\\textasciitilde{}",
-        "^":  "\\textasciicircum{}",
+        "&": "\\&",
+        "%": "\\%",
+        "$": "\\$",
+        "#": "\\#",
+        "_": "\\_",
+        "{": "\\{",
+        "}": "\\}",
+        "~": "\\textasciitilde{}",
+        "^": "\\textasciicircum{}",
         "\\": "\\textbackslash{}",
-        "²":  "$^{2}$",  # R²
+        "²": "$^{2}$",  # R²
     }
     result = ""
     for ch in s:

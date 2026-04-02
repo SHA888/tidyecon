@@ -4,9 +4,10 @@ renderers/html.py
 Renders a SummaryTable to a self-contained HTML string.
 Styled to match the aesthetics of R's modelsummary HTML output.
 """
+
 from __future__ import annotations
 
-from .._protocol import SummaryTable, TableRow
+from .._protocol import SummaryTable
 
 _CSS = """
 <style>
@@ -116,8 +117,4 @@ def render_html(table: SummaryTable) -> str:
 
 def _esc(s: str) -> str:
     """Minimal HTML escaping — preserves stars (*, **) and brackets."""
-    return (
-        s.replace("&", "&amp;")
-         .replace("<", "&lt;")
-         .replace(">", "&gt;")
-    )
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

@@ -5,6 +5,7 @@ modelsummary() — one-function publication tables.
 
 Mirrors the API of R's modelsummary package as closely as Python allows.
 """
+
 from __future__ import annotations
 
 import re
@@ -19,20 +20,21 @@ from ._protocol import DEFAULT_STARS, SummaryTable, TableRow, _stars
 
 # ── Default GOF rows (order matters — this is the display order) ──────────────
 DEFAULT_GOF: list[tuple[str, str]] = [
-    ("nobs",          "N"),
-    ("r_squared",     "R²"),
+    ("nobs", "N"),
+    ("r_squared", "R²"),
     ("adj_r_squared", "Adj. R²"),
-    ("rmse",          "RMSE"),
-    ("f_statistic",   "F"),
+    ("rmse", "RMSE"),
+    ("f_statistic", "F"),
     ("fixed_effects", "Fixed effects"),
-    ("vcov_type",     "Std. errors"),
+    ("vcov_type", "Std. errors"),
 ]
 
-_FMT_INT   = "{:.0f}"
+_FMT_INT = "{:.0f}"
 _FMT_FLOAT = "{:.3f}"
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
 
 def modelsummary(
     models: dict[str, Any] | list[Any],
@@ -76,28 +78,26 @@ def modelsummary(
         named = dict(models)
 
     star_thresholds: dict[str, float] | None = (
-        DEFAULT_STARS if stars is True
-        else None if stars is False
-        else stars
+        DEFAULT_STARS if stars is True else None if stars is False else stars
     )
 
     # ── Extract tidy + glance for each model ──────────────────────────────
-    tidy_frames  = {k: tidy(m)   for k, m in named.items()}
+    tidy_frames = {k: tidy(m) for k, m in named.items()}
     glance_frames = {k: glance(m) for k, m in named.items()}
 
     # ── Build coefficient grid ─────────────────────────────────────────────
     table = _build_summary_table(
-        col_labels     = list(named.keys()),
-        tidy_frames    = tidy_frames,
-        glance_frames  = glance_frames,
-        statistic      = statistic,
-        fmt            = fmt,
-        star_thresholds = star_thresholds,
-        coef_map       = coef_map,
-        coef_omit      = coef_omit,
-        gof_map        = gof_map,
-        title          = title,
-        notes          = notes or [],
+        col_labels=list(named.keys()),
+        tidy_frames=tidy_frames,
+        glance_frames=glance_frames,
+        statistic=statistic,
+        fmt=fmt,
+        star_thresholds=star_thresholds,
+        coef_map=coef_map,
+        coef_omit=coef_omit,
+        gof_map=gof_map,
+        title=title,
+        notes=notes or [],
     )
 
     # ── Dispatch to renderer ───────────────────────────────────────────────
@@ -105,6 +105,7 @@ def modelsummary(
 
 
 # ── Table builder ─────────────────────────────────────────────────────────────
+
 
 def _build_summary_table(
     col_labels: list[str],
@@ -119,7 +120,6 @@ def _build_summary_table(
     title: str | None,
     notes: list[str],
 ) -> SummaryTable:
-
     # 1. Collect ordered union of terms
     all_terms: list[str] = []
     seen: set[str] = set()
@@ -144,7 +144,7 @@ def _build_summary_table(
     # 4. Build coefficient rows (estimate row + statistic row per term)
     coef_rows: list[TableRow] = []
     for term in all_terms:
-        est_cells  = []
+        est_cells = []
         stat_cells = []
         for col in col_labels:
             df = tidy_frames[col]
@@ -163,7 +163,7 @@ def _build_summary_table(
 
     # 5. Build GOF rows
     effective_gof = gof_map if gof_map else [k for k, _ in DEFAULT_GOF]
-    gof_labels    = dict(DEFAULT_GOF)
+    gof_labels = dict(DEFAULT_GOF)
 
     gof_rows: list[TableRow] = []
     for col_key in effective_gof:
@@ -186,17 +186,14 @@ def _build_summary_table(
         + gof_rows
     )
 
-    legend = (
-        "* p<0.1  ** p<0.05  *** p<0.01"
-        if star_thresholds else ""
-    )
+    legend = "* p<0.1  ** p<0.05  *** p<0.01" if star_thresholds else ""
 
     return SummaryTable(
-        col_labels   = col_labels,
-        rows         = rows,
-        title        = title,
-        notes        = notes,
-        stars_legend = legend,
+        col_labels=col_labels,
+        rows=rows,
+        title=title,
+        notes=notes,
+        stars_legend=legend,
     )
 
 
@@ -233,10 +230,11 @@ def _fmt_gof(val: Any, key: str, fmt: str) -> str:
 
 # ── Renderer dispatch ──────────────────────────────────────────────────────────
 
+
 def _render(table: SummaryTable, output: str) -> str | Path | None:
-    from .renderers.html  import render_html
+    from .renderers.docx import render_docx
+    from .renderers.html import render_html
     from .renderers.latex import render_latex
-    from .renderers.docx  import render_docx
 
     out = output.strip()
     ext = Path(out).suffix.lower() if out not in ("html", "latex", "docx") else f".{out}"
@@ -260,7 +258,7 @@ def _render(table: SummaryTable, output: str) -> str | Path | None:
     if ext == ".docx" or out == "docx":
         buf = render_docx(table)
         if out == "docx":
-            return buf          # bytes
+            return buf  # bytes
         p = Path(out)
         p.write_bytes(buf)
         return p

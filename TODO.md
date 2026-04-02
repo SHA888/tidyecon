@@ -33,19 +33,19 @@ Status: `[ ]` open · `[x]` done · `[-]` deferred · `[~]` in progress
 
 ## Milestone 1 — Backend completeness
 
-### 1.1 pyfixest integration tests
-- [ ] Add `pyfixest` to dev dependencies in `pyproject.toml` (already listed — verify install)
-- [ ] Add `tests/test_pyfixest.py`:
-  - [ ] `test_tidy_feols_basic` — OLS with FE, verify schema
-  - [ ] `test_tidy_feols_clustered` — CRV1, verify SE differs from iid
-  - [ ] `test_tidy_fepois` — Poisson FE
-  - [ ] `test_tidy_feols_iv` — IV via three-part formula
-  - [ ] `test_glance_feols` — nobs, r2, rmse extraction
-  - [ ] `test_tidy_ci_width` — conf_level=0.99 > conf_level=0.95
-- [ ] Add pyfixest validation fixture in `validate/fixtures.py`:
-  - [ ] `feols_mtcars` — `feols("mpg ~ hp | cyl", data=mtcars)` vs R `fixest::feols`
-  - [ ] Document R commands used to generate expected values
-- [ ] Verify `_tidy_pyfixest` CI column detection handles pyfixest ≥ 0.25 column name changes
+### 1.1 pyfixest integration tests ✅ COMPLETED
+- [x] Add `pyfixest` to dev dependencies in `pyproject.toml` (already listed — verify install)
+- [x] Add `tests/test_pyfixest.py`:
+  - [x] `test_tidy_feols_basic` — OLS with FE, verify schema
+  - [x] `test_tidy_feols_clustered` — CRV1, verify SE differs from iid
+  - [x] `test_tidy_fepois` — Poisson FE
+  - [x] `test_tidy_feols_iv` — IV via three-part formula
+  - [x] `test_glance_feols` — nobs, r2, rmse extraction
+  - [x] `test_tidy_ci_width` — conf_level=0.99 > conf_level=0.95
+- [x] Add pyfixest validation fixture in `validate/fixtures.py`:
+  - [x] `feols_mtcars` — `feols("mpg ~ hp | cyl", data=mtcars)` vs R `fixest::feols`
+  - [x] Document R commands used to generate expected values
+- [x] Verify `_tidy_pyfixest` CI column detection handles pyfixest ≥ 0.25 column name changes
 
 ### 1.2 linearmodels integration tests
 - [ ] Add `tests/test_linearmodels.py`:

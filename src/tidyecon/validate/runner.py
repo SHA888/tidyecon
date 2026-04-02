@@ -7,19 +7,16 @@ numerical equivalence.
 CLI:  tidyecon-validate
       python -m tidyecon.validate.runner
 """
+
 from __future__ import annotations
 
 import math
 import sys
-import textwrap
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
-import pandas as pd
-
 from .._adapters import tidy as _tidy
-from .fixtures import ALL_FIXTURES, CoefFixture, ModelFixture
+from .fixtures import ALL_FIXTURES, ModelFixture
 
 
 @dataclass
@@ -54,6 +51,7 @@ class FixtureResult:
 
 # ── Core runner ───────────────────────────────────────────────────────────────
 
+
 def run_fixture(fixture: ModelFixture) -> FixtureResult:
     """Build the model from fixture.model_factory and compare tidy() output."""
     # Build model
@@ -76,51 +74,53 @@ def run_fixture(fixture: ModelFixture) -> FixtureResult:
         if term_rows.empty:
             # Term not found — fail all checks for this term
             for fld in ("estimate", "std_error", "statistic"):
-                checks.append(CheckResult(
-                    fixture_name=fixture.name,
-                    term=coef_fix.term,
-                    field=fld,
-                    expected=getattr(coef_fix, fld),
-                    actual=float("nan"),
-                    tolerance=fixture.tol_coef,
-                    passed=False,
-                ))
+                checks.append(
+                    CheckResult(
+                        fixture_name=fixture.name,
+                        term=coef_fix.term,
+                        field=fld,
+                        expected=getattr(coef_fix, fld),
+                        actual=float("nan"),
+                        tolerance=fixture.tol_coef,
+                        passed=False,
+                    )
+                )
             continue
 
         row = term_rows.iloc[0]
 
         field_tol = {
-            "estimate":  fixture.tol_coef,
+            "estimate": fixture.tol_coef,
             "std_error": fixture.tol_se,
             "statistic": fixture.tol_coef * 10,  # t-stats accumulate error
         }
         field_map = {
-            "estimate":  float(row["estimate"]),
+            "estimate": float(row["estimate"]),
             "std_error": float(row["std_error"]),
             "statistic": float(row["statistic"]),
         }
         expected_map = {
-            "estimate":  coef_fix.estimate,
+            "estimate": coef_fix.estimate,
             "std_error": coef_fix.std_error,
             "statistic": coef_fix.statistic,
         }
 
         for fld, actual in field_map.items():
             expected = expected_map[fld]
-            tol      = field_tol[fld]
-            passed   = (
-                math.isnan(expected) and math.isnan(actual)
-            ) or abs(actual - expected) <= tol
+            tol = field_tol[fld]
+            passed = (math.isnan(expected) and math.isnan(actual)) or abs(actual - expected) <= tol
 
-            checks.append(CheckResult(
-                fixture_name=fixture.name,
-                term=coef_fix.term,
-                field=fld,
-                expected=expected,
-                actual=actual,
-                tolerance=tol,
-                passed=passed,
-            ))
+            checks.append(
+                CheckResult(
+                    fixture_name=fixture.name,
+                    term=coef_fix.term,
+                    field=fld,
+                    expected=expected,
+                    actual=actual,
+                    tolerance=tol,
+                    passed=passed,
+                )
+            )
 
     return FixtureResult(fixture=fixture, checks=checks)
 
@@ -130,6 +130,7 @@ def run_all(fixtures=ALL_FIXTURES) -> list[FixtureResult]:
 
 
 # ── Reporter ──────────────────────────────────────────────────────────────────
+
 
 def report(results: list[FixtureResult], verbose: bool = True) -> int:
     """Print a human-readable report. Returns exit code (0=pass, 1=fail)."""
@@ -148,7 +149,7 @@ def report(results: list[FixtureResult], verbose: bool = True) -> int:
         if res.build_error:
             print(f"       ERROR building model: {res.build_error}")
             failed_checks += 1
-            total_checks  += 1
+            total_checks += 1
             continue
 
         for chk in res.checks:
@@ -175,10 +176,11 @@ def report(results: list[FixtureResult], verbose: bool = True) -> int:
 
 # ── CLI entry point ────────────────────────────────────────────────────────────
 
+
 def cli() -> None:
     verbose = "--verbose" in sys.argv or "-v" in sys.argv
-    results  = run_all()
-    code     = report(results, verbose=verbose)
+    results = run_all()
+    code = report(results, verbose=verbose)
     sys.exit(code)
 
 

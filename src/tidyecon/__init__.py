@@ -22,8 +22,9 @@ Quick start
         output="table.html"
     )
 """
+
 from ._adapters import glance, tidy
-from ._summary  import modelsummary
+from ._summary import modelsummary
 
 __all__ = ["tidy", "glance", "modelsummary"]
 __version__ = "0.1.0"
