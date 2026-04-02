@@ -1,0 +1,98 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tidyecon"
+version = "0.1.0"
+description = "Unified tidy interface and publication tables for Python econometrics"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["econometrics", "statistics", "regression", "tables", "stata", "publication"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pandas>=2.1",
+    "numpy>=1.26",
+    "jinja2>=3.1",
+    "python-docx>=1.1",
+]
+
+[project.optional-dependencies]
+statsmodels = ["statsmodels>=0.14"]
+pyfixest   = ["pyfixest>=0.20"]
+linearmodels = ["linearmodels>=6.0"]
+all = [
+    "statsmodels>=0.14",
+    "pyfixest>=0.20",
+    "linearmodels>=6.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pyright>=1.1",
+    "pre-commit>=3.7",
+    "statsmodels>=0.14",
+    "pyfixest>=0.20",
+    "linearmodels>=6.0",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+tidyecon-validate = "tidyecon.validate.runner:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tidyecon"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pyright>=1.1",
+    "pre-commit>=3.7",
+    "statsmodels>=0.14",
+    "pyfixest>=0.20",
+    "linearmodels>=6.0",
+    "ruff>=0.4",
+]
+
+[tool.ruff]
+src = ["src"]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+pythonVersion          = "3.11"
+include                = ["src"]
+reportMissingTypeStubs = false
+
+[tool.coverage.run]
+source = ["tidyecon"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
