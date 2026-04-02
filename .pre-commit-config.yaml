@@ -1,11 +1,4 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.10
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
@@ -15,3 +8,33 @@ repos:
       - id: check-toml
       - id: check-merge-conflict
       - id: debug-statements
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.10
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.369
+    hooks:
+      - id: pyright
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: uv run python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [--tb=short]
+
+      - id: numerical-validation
+        name: numerical validation
+        entry: uv run python -m pytest tests/test_validate.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [-v]

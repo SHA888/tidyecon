@@ -13,8 +13,16 @@ Table style follows common journal/policy paper conventions:
 from __future__ import annotations
 
 import io
+from typing import TYPE_CHECKING
 
 from .._protocol import SummaryTable
+
+if TYPE_CHECKING:
+    from docx import Document
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    from docx.shared import Pt, RGBColor
 
 try:
     from docx import Document
@@ -37,8 +45,8 @@ def render_docx(table: SummaryTable) -> bytes:
 
     # ── Style: default to Times New Roman throughout ──────────────────────
     style = doc.styles["Normal"]
-    style.font.name = "Times New Roman"
-    style.font.size = Pt(11)
+    style.font.name = "Times New Roman"  # type: ignore[attr-defined]
+    style.font.size = Pt(11)  # type: ignore[attr-defined]
 
     # ── Title ─────────────────────────────────────────────────────────────
     if table.title:

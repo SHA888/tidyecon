@@ -84,8 +84,11 @@ quote-style = "double"
 indent-style = "space"
 
 [tool.pyright]
+venvPath = "."
+venv = ".venv"
 pythonVersion          = "3.11"
 include                = ["src"]
+exclude                = ["tests", "examples"]
 reportMissingTypeStubs = false
 
 [tool.coverage.run]

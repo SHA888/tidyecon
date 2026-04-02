@@ -53,7 +53,9 @@ def _validate_tidy(df: pd.DataFrame) -> pd.DataFrame:
     for col in TIDY_COLS:
         if col not in df.columns:
             df[col] = np.nan
-    return df[TIDY_COLS].reset_index(drop=True)
+    result = df[TIDY_COLS].reset_index(drop=True)
+    # Ensure we always return a DataFrame, even if result is a Series
+    return result if isinstance(result, pd.DataFrame) else result.to_frame()
 
 
 def _validate_glance(df: pd.DataFrame) -> pd.DataFrame:
@@ -64,7 +66,9 @@ def _validate_glance(df: pd.DataFrame) -> pd.DataFrame:
                 if col != "fixed_effects" and col != "vcov_type" and col != "estimator"
                 else ""
             )
-    return df[GLANCE_COLS].reset_index(drop=True)
+    result = df[GLANCE_COLS].reset_index(drop=True)
+    # Ensure we always return a DataFrame, even if result is a Series
+    return result if isinstance(result, pd.DataFrame) else result.to_frame()
 
 
 # ── Internal table row (used by renderers) ────────────────────────────────────

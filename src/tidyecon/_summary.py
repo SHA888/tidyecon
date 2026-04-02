@@ -48,7 +48,7 @@ def modelsummary(
     title: str | None = None,
     notes: list[str] | None = None,
     output: str = "html",
-) -> str | Path | None:
+) -> str | Path | bytes | None:
     """
     Produce a publication-ready regression table.
 
@@ -231,7 +231,7 @@ def _fmt_gof(val: Any, key: str, fmt: str) -> str:
 # ── Renderer dispatch ──────────────────────────────────────────────────────────
 
 
-def _render(table: SummaryTable, output: str) -> str | Path | None:
+def _render(table: SummaryTable, output: str) -> str | Path | bytes | None:
     from .renderers.docx import render_docx
     from .renderers.html import render_html
     from .renderers.latex import render_latex

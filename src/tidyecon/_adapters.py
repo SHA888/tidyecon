@@ -10,7 +10,7 @@ optional dependencies raise a clear error only when actually needed.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -19,6 +19,9 @@ from ._protocol import (
     _validate_glance,
     _validate_tidy,
 )
+
+if TYPE_CHECKING:
+    pass
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
@@ -96,8 +99,8 @@ def _is_statsmodels(model: Any) -> bool:
 
 def _is_pyfixest(model: Any) -> bool:
     try:
-        from pyfixest.estimation.feols_ import Feols
-        from pyfixest.estimation.fepois_ import Fepois
+        from pyfixest.estimation.models.feols_ import Feols
+        from pyfixest.estimation.models.fepois_ import Fepois
 
         return isinstance(model, Feols | Fepois)
     except ImportError:
@@ -106,23 +109,23 @@ def _is_pyfixest(model: Any) -> bool:
 
 def _is_linearmodels(model: Any) -> bool:
     try:
-        from linearmodels.iv.results import IVGMMResults, IVResults
-        from linearmodels.panel.results import (
-            BetweenOLSResults,
-            FirstDifferenceOLSResults,
-            PanelEffectsResults,
-            PooledOLSResults,
-            RandomEffectsResults,
+        from linearmodels.iv import IV2SLS, IVGMM
+        from linearmodels.panel import (
+            BetweenOLS,
+            FirstDifferenceOLS,
+            PanelOLS,
+            PooledOLS,
+            RandomEffects,
         )
 
         _types = (
-            PanelEffectsResults,
-            BetweenOLSResults,
-            PooledOLSResults,
-            RandomEffectsResults,
-            FirstDifferenceOLSResults,
-            IVResults,
-            IVGMMResults,
+            PanelOLS,
+            BetweenOLS,
+            PooledOLS,
+            RandomEffects,
+            FirstDifferenceOLS,
+            IV2SLS,
+            IVGMM,
         )
         return isinstance(model, _types)
     except ImportError:
