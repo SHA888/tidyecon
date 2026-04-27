@@ -194,8 +194,10 @@ def _tidy_pyfixest(model: Any, conf_level: float = 0.95) -> pd.DataFrame:
     try:
         raw = model.tidy(alpha=alpha)
         # pyfixest tidy() columns (as of 0.20+):
-        #   Estimate | Std. Error | t value | Pr(>|t|) | 2.5% | 97.5%
-        #   Coefficient is in the index, not a column
+        #   Estimate | Std. Error | t value | Pr(>|t|) | <lo>% | <hi>%
+        #   Coefficient is in the index, not a column.
+        # The CI column names are alpha-derived, e.g. "2.5%"/"97.5%" for
+        # alpha=0.05, "0.5%"/"99.5%" for alpha=0.01 (verified pyfixest 0.50.0).
         raw = raw.reset_index()
         rename = {
             "Coefficient": "term",
@@ -205,17 +207,24 @@ def _tidy_pyfixest(model: Any, conf_level: float = 0.95) -> pd.DataFrame:
             "Pr(>|t|)": "p_value",
         }
         raw = raw.rename(columns=rename)
-        # CI columns: detect by position (last two numeric cols)
-        numeric_unnamed = [c for c in raw.columns if c not in rename.values() and c != "term"]
-        if len(numeric_unnamed) >= 2:
-            raw = raw.rename(
-                columns={
+
+        lo_name = f"{alpha / 2 * 100:.1f}%"
+        hi_name = f"{(1 - alpha / 2) * 100:.1f}%"
+        ci_rename: dict[str, str] = {}
+        if lo_name in raw.columns and hi_name in raw.columns:
+            ci_rename = {lo_name: "conf_low", hi_name: "conf_high"}
+        else:
+            # Fallback: last two unmapped columns are the CI bounds.
+            numeric_unnamed = [c for c in raw.columns if c not in rename.values() and c != "term"]
+            if len(numeric_unnamed) >= 2:
+                ci_rename = {
                     numeric_unnamed[-2]: "conf_low",
                     numeric_unnamed[-1]: "conf_high",
                 }
-            )
+        if ci_rename:
+            raw = raw.rename(columns=ci_rename)
         return raw.reset_index(drop=True)
-    except Exception:
+    except (AttributeError, KeyError, TypeError, ValueError):
         # Fallback: manual extraction via public accessors
         coef = model.coef()
         se = model.se()
@@ -236,9 +245,13 @@ def _tidy_pyfixest(model: Any, conf_level: float = 0.95) -> pd.DataFrame:
 
 
 def _glance_pyfixest(model: Any) -> pd.DataFrame:
-    # nobs - get from data dimensions
+    # nobs: prefer pyfixest's own _N attribute (verified pyfixest 0.50.0),
+    # fall back to data length for older/edge cases.
     nobs = np.nan
-    if hasattr(model, "_data") and model._data is not None:
+    n_attr = getattr(model, "_N", None)
+    if n_attr is not None:
+        nobs = n_attr
+    elif hasattr(model, "_data") and model._data is not None:
         nobs = len(model._data)
 
     # R² — try multiple attribute spellings across versions

@@ -103,10 +103,12 @@ OLS_MTCARS = ModelFixture(
         _MTCARS_FACTORY_PREAMBLE + "X = sm.add_constant(mtcars[['hp', 'wt']])\n"
         "model = sm.OLS(mtcars['mpg'], X).fit()"
     ),
+    # 95% CIs computed as estimate ± qt(0.975, df=29) * std_error,
+    # which matches R's confint(lm(...)) to machine precision.
     coefs=[
-        CoefFixture("const", 37.22727012, 1.59878754, 23.2847964, 2.565e-20, 34.002e0, 40.4526e0),
-        CoefFixture("hp", -0.03177295, 0.00902971, -3.5190399, 1.782e-03, -0.0501e0, -0.0134e0),
-        CoefFixture("wt", -3.87783074, 0.63273151, -6.1290048, 1.126e-06, -5.1719e0, -2.5838e0),
+        CoefFixture("const", 37.22727012, 1.59878754, 23.2847964, 2.565e-20, 33.957342, 40.497199),
+        CoefFixture("hp", -0.03177295, 0.00902971, -3.5190399, 1.782e-03, -0.050240, -0.013305),
+        CoefFixture("wt", -3.87783074, 0.63273151, -6.1290048, 1.126e-06, -5.171935, -2.583727),
     ],
     glance=GlanceFixture(nobs=32, r_squared=0.82680, adj_r_squared=0.81484, f_statistic=69.211),
     tol_coef=1e-4,

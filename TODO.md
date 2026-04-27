@@ -165,3 +165,20 @@ Status: `[ ]` open · `[x]` done · `[-]` deferred · `[~]` in progress
 - [-] Excel output — `great_tables` covers this better
 - [-] Bayesian model support (ArviZ) — separate domain, deferred to v0.3
 - [-] Survival analysis (`lifelines`) — deferred to v0.2
+
+---
+
+## Future work (deferred from Milestone 1.1 review)
+
+- [ ] **Decide `f_statistic` semantics for `_glance_pyfixest`.** Currently always `np.nan`.
+  Touches the public glance schema in `_protocol.py`, `_summary.py`, `validate/fixtures.py`,
+  `README.md`, and `examples/01_quickstart.py`, so any change is cross-cutting. Options:
+  - drop the column from the global `GLANCE_COLS` schema entirely;
+  - compute it via `model.wald_test()` for Feols (verify behavior on Fepois / IV);
+  - keep `nan` and document it as the "not available" contract.
+- [ ] **Reproducibility comments in `validate/fixtures.py`.** Add the exact R commands
+  (`broom::tidy`, `fixest::etable`, `confint`) used to derive each `CoefFixture` /
+  `GlanceFixture` value, so future maintainers can regenerate them without guessing.
+- [ ] **Rename `test_pyfixest_dispatch_does_not_swallow_statsmodels`** (was
+  `test_pyfixest_adapter_error_handling`) is already descriptive, but consider adding
+  a real negative-path test: `tidy(object())` should raise `TypeError` from the dispatcher.

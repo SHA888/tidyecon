@@ -93,16 +93,22 @@ def run_fixture(fixture: ModelFixture) -> FixtureResult:
             "estimate": fixture.tol_coef,
             "std_error": fixture.tol_se,
             "statistic": fixture.tol_coef * 10,  # t-stats accumulate error
+            "conf_low": fixture.tol_se,
+            "conf_high": fixture.tol_se,
         }
         field_map = {
             "estimate": float(row["estimate"]),
             "std_error": float(row["std_error"]),
             "statistic": float(row["statistic"]),
+            "conf_low": float(row["conf_low"]),
+            "conf_high": float(row["conf_high"]),
         }
         expected_map = {
             "estimate": coef_fix.estimate,
             "std_error": coef_fix.std_error,
             "statistic": coef_fix.statistic,
+            "conf_low": coef_fix.conf_low_95,
+            "conf_high": coef_fix.conf_high_95,
         }
 
         for fld, actual in field_map.items():
